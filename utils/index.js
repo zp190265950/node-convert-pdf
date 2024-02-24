@@ -60,7 +60,7 @@ const convertPagePdfMerge = async (res, data) => {
   // 把文件写到硬盘中
   // await writeFile(pdf_path, pdfBytes);
 }
-async function convertPDF(res, data) {
+const convertPDF = async (res, data) => {
   const browser = await puppeteer.launch()
   // await page.goto('https://www.baidu.com/')
   // console.log(data.htmls);
