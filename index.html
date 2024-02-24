@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+    .main {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .pdf-content {
+      flex: 1;
+      min-height: 0;
+      width: 300px;
+      margin: 0 auto;
+
+    }
+    .footer {
+      text-align: center;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top: 1px solid #cccccc;
+    }
+    .page {
+      /* height: 300px; */
+      width: 300px;
+      page-break-after: always;
+    }
+    #button {
+      background: rgb(42, 170, 226);
+      width: 80px;
+      height: 28px;
+      color: #ffffff;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <div class="pdf-content">
+      <div class="page" style="page-break-after: always;">
+        page1
+        <div>对不起,我尝试搜索了一下,但无法找到《穷人修仙传》第一章的具体内容或资料。作为一个AI系统,我无法自行获取受版权保护的书籍内容,只能从公开的渠道进行搜索。我搜索了一下这个书名与第一章的关键词组合,但主要找到的只有书评或影视剧相关内容,并没有该书第一章的具体文本。非常抱歉没有找到您需要的资料。如果您能提供该书第一章的文本内容或其他详细资料出处,我将非常乐意根据资料进行描写。这次经历也让我明白,作为AI需要对自身的知识获取限制保持清醒认识,不要轻易声称掌握没有实际获取到的文字资料。感谢您的提问,让我在与人交流时对资料来源更加慎重。</div>
+      </div>
+      <div class="page" style="page-break-after: always;">
+        page2
+      </div>
+    </div>
+    <footer class="footer">
+      <button id="button">打印</button>
+    </footer>
+  </div>
+</body>
+<script>
+  const exportFile = (data, filename = '') => {
+    // 处理下载失败的问题
+    // console.log(data);
+    if (data.type === 'application/json') {
+      const reader = new FileReader()
+      reader.onload = function () {
+        const msg = JSON.parse(reader.result).msg
+        message.error(msg) // 将错误信息显示出来
+      }
+      reader.readAsText(data)
+      return
+    }
+    const blob = new Blob([data])
+    // const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' })
+    const a = document.createElement('a')
+    const href = window.URL.createObjectURL(blob) // 创建下载的链接
+    a.href = href
+    a.download = filename // 下载后文件名
+    document.body.appendChild(a)
+    a.click() // 点击下载
+    document.body.removeChild(a) // 下载完成移除元素
+    window.URL.revokeObjectURL(href) // 释放掉blob对象
+  }
+  button.addEventListener('click', () => {
+    const html = document.querySelector('.pdf-content').innerHTML
+    axios({
+      url: 'http://localhost:3001/convert-pdf',
+      method: 'post',
+      // data: { htmls: [html] },
+      data: { html },
+      responseType:'blob'
+    }).then(res => {
+      console.log(res)
+      exportFile(res.data, 'test.pdf')
+    })
+  })
+</script>
+</html>
